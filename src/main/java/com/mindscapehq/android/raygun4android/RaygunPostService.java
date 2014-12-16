@@ -36,9 +36,11 @@ public class RaygunPostService extends Service
       {
         String message = (String) bundle.get("msg");
         String apiKey = (String) bundle.get("apikey");
+        String endpoint = (String) bundle.get("endpoint");
+
         if (hasInternetConnection())
         {
-          RaygunClient.Post(apiKey, message);
+          RaygunClient.Post(apiKey, message, endpoint);
         }
         else
         {
@@ -68,7 +70,7 @@ public class RaygunPostService extends Service
             File fn = new File(getCacheDir(), Integer.toString(file) + ".raygun");
             try
             {
-              MessageApiKey messageApiKey = new MessageApiKey(apiKey, message);
+              MessageApiKey messageApiKey = new MessageApiKey(apiKey, message, endpoint);
               ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fn));
               out.writeObject(messageApiKey);
               out.close();

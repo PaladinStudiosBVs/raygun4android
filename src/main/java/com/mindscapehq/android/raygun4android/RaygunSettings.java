@@ -1,14 +1,22 @@
 package main.java.com.mindscapehq.android.raygun4android;
 
-public class RaygunSettings {
+import java.net.URL;
+
+public final class RaygunSettings {
+
+  private static String apiEndpoint;
 
   private RaygunSettings() { }
 
-  public static RaygunSettings getSettings() { return new RaygunSettings(); }
+  public static String getApiEndpoint() {
+    if (apiEndpoint == null) {
+      apiEndpoint = "https://api.raygun.io/entries";
+    }
 
-  private final String defaultApiEndpoint = "https://api.raygun.io/entries";
+    return apiEndpoint;
+  }
 
-  public String getApiEndpoint() {
-    return defaultApiEndpoint;
+  public static void setApiEndpoint(URL url) {
+    apiEndpoint = url.toString();
   }
 }

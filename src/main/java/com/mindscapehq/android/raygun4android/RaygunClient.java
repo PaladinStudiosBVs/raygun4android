@@ -21,6 +21,8 @@ import org.apache.http.protocol.HTTP;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -228,14 +230,14 @@ public class RaygunClient
    * @param jsonPayload The JSON representation of a RaygunMessage to be delivered over HTTPS.
    * @return HTTP result code - 202 if successful, 403 if API key invalid, 400 if bad message (invalid properties)
    */
-  public static int Post(String apiKey, String jsonPayload)
+  public static int Post(String apiKey, String jsonPayload, String endpoint)
   {
     try
     {
       if (validateApiKey(apiKey))
       {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost(RaygunSettings.getSettings().getApiEndpoint());
+        HttpPost post = new HttpPost(endpoint);
         post.addHeader("X-ApiKey", apiKey);
         post.addHeader("Content-Type", "application/json");
 
@@ -386,6 +388,8 @@ public class RaygunClient
       }
       intent.putExtra("msg", jsonPayload);
       intent.putExtra("apikey", apiKey);
+      intent.putExtra("endpoint", RaygunSettings.getApiEndpoint());
+
       _service = intent;
       _context.startService(_service);
   }
@@ -489,6 +493,15 @@ public class RaygunClient
 
   public static void SetUserCustomData(Map userCustomData) {
     _userCustomData = userCustomData;
+  }
+
+  public static URL GetApiEndpoint() throws MalformedURLException
+  {
+    return new URL(RaygunSettings.getApiEndpoint());
+  }
+
+  public static void SetApiEndpoint(URL url) {
+    RaygunSettings.setApiEndpoint(url);
   }
 
   public static class RaygunUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
