@@ -1,5 +1,7 @@
 package main.java.com.mindscapehq.android.raygun4android.messages;
 
+import main.java.com.mindscapehq.android.raygun4android.RaygunLogger;
+
 public class RaygunErrorMessage {
   private RaygunErrorMessage innerError;
   private String message;
@@ -7,18 +9,25 @@ public class RaygunErrorMessage {
   private RaygunErrorStackTraceLineMessage[] stackTrace;
 
   public RaygunErrorMessage(Throwable throwable) {
-    message = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
-    className = throwable.getClass().getCanonicalName();
+    try {
+      message = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
+      className = throwable.getClass().getCanonicalName();
 
-    if (throwable.getCause() != null) {
-      innerError = new RaygunErrorMessage((Exception) throwable.getCause());
+      if (throwable.getCause() != null) {
+        innerError = new RaygunErrorMessage((Exception) throwable.getCause());
+      }
+
+      StackTraceElement[] ste = throwable.getStackTrace();
+      stackTrace = new RaygunErrorStackTraceLineMessage[ste.length];
+
+      for (int i = 0; i < ste.length; i++) {
+        stackTrace[i] = new RaygunErrorStackTraceLineMessage(ste[i]);
+      }
     }
-
-    StackTraceElement[] ste = throwable.getStackTrace();
-    stackTrace = new RaygunErrorStackTraceLineMessage[ste.length];
-
-    for (int i = 0; i < ste.length; i++) {
-      stackTrace[i] = new RaygunErrorStackTraceLineMessage(ste[i]);
+    catch (Exception e) {
+      RaygunLogger.e("Failed to collect error information - " + e);
+      message = "Not supplied";
+      className = "RaygunError";
     }
   }
 

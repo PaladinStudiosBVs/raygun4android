@@ -93,7 +93,7 @@ public class RaygunEnvironmentMessage {
       diskSpaceFree = (availableBlocks * blockSize) / 0x100000;
     }
     catch (Exception e) {
-      RaygunLogger.w("Couldn't get all env data: " + e);
+      RaygunLogger.w("Couldn't get all environment data - " + e);
     }
   }
 

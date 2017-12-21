@@ -219,6 +219,11 @@ public class RaygunClient {
    */
   public static void send(Throwable throwable) {
     RaygunMessage msg = buildMessage(throwable);
+
+    if (msg == null) {
+      return;
+    }
+
     postCachedMessages();
 
     if (RaygunClient.tags != null) {
@@ -254,6 +259,11 @@ public class RaygunClient {
    */
   public static void send(Throwable throwable, List tags) {
     RaygunMessage msg = buildMessage(throwable);
+
+    if (msg == null) {
+      return;
+    }
+
     msg.getDetails().setTags(mergeTags(tags));
 
     if (RaygunClient.userCustomData != null) {
@@ -289,6 +299,10 @@ public class RaygunClient {
    */
   public static void send(Throwable throwable, List tags, Map userCustomData) {
     RaygunMessage msg = buildMessage(throwable);
+
+    if (msg == null) {
+      return;
+    }
 
     msg.getDetails().setTags(mergeTags(tags));
     msg.getDetails().setUserCustomData(mergeUserCustomData(userCustomData));
@@ -524,7 +538,7 @@ public class RaygunClient {
       return msg;
     }
     catch (Exception e) {
-      RaygunLogger.e("Failed to build RaygunMessage - " + e);
+      RaygunLogger.e("Failed to build RaygunMessage - " + e.toString());
     }
     return null;
   }
@@ -588,7 +602,6 @@ public class RaygunClient {
   }
 
   private static void spinUpService(String apiKey, String jsonPayload, boolean isPulse) {
-    System.out.println(jsonPayload);
     Intent intent;
     if (RaygunClient.service == null) {
       intent = new Intent(RaygunClient.context, RaygunPostService.class);

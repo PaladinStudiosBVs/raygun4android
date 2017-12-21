@@ -11,10 +11,10 @@ import main.java.com.mindscapehq.android.raygun4android.messages.RaygunErrorMess
 import main.java.com.mindscapehq.android.raygun4android.messages.RaygunMessage;
 
 public class RaygunMessageBuilder implements IRaygunMessageBuilder {
-  private RaygunMessage raygunMessage;
+
+  private RaygunMessage raygunMessage = new RaygunMessage();
 
   public RaygunMessageBuilder() {
-    raygunMessage = new RaygunMessage();
   }
 
   @Override

@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
+import main.java.com.mindscapehq.android.raygun4android.RaygunLogger;
+
 public class NetworkInfo {
   private List<String> iPAddress = new ArrayList<String>();
   private String networkConnectivityState;
@@ -32,73 +34,78 @@ public class NetworkInfo {
   private String readNetworkConnectivityState(Context context) {
     String result = "Not connected";
 
-    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    android.net.NetworkInfo info = cm.getActiveNetworkInfo();
+    try {
+      ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+      android.net.NetworkInfo info = cm.getActiveNetworkInfo();
 
-    if (info != null) {
-      if (info.isConnected()) {
-        result = "Connected - ";
+      if (info != null) {
+        if (info.isConnected()) {
+          result = "Connected - ";
 
-        int type = info.getType();
+          int type = info.getType();
 
-        switch (type) {
-          case ConnectivityManager.TYPE_WIFI:
-            result += "WiFi";
-            break;
-          case ConnectivityManager.TYPE_WIMAX:
-            result += "WiMax";
-            break;
-          case ConnectivityManager.TYPE_MOBILE:
-          case ConnectivityManager.TYPE_MOBILE_DUN:
-          case ConnectivityManager.TYPE_MOBILE_HIPRI:
-          case ConnectivityManager.TYPE_MOBILE_MMS:
-          case ConnectivityManager.TYPE_MOBILE_SUPL:
-            result += "Mobile - ";
+          switch (type) {
+            case ConnectivityManager.TYPE_WIFI:
+              result += "WiFi";
+              break;
+            case ConnectivityManager.TYPE_WIMAX:
+              result += "WiMax";
+              break;
+            case ConnectivityManager.TYPE_MOBILE:
+            case ConnectivityManager.TYPE_MOBILE_DUN:
+            case ConnectivityManager.TYPE_MOBILE_HIPRI:
+            case ConnectivityManager.TYPE_MOBILE_MMS:
+            case ConnectivityManager.TYPE_MOBILE_SUPL:
+              result += "Mobile - ";
 
-            int subtype = info.getSubtype();
-            switch (subtype) {
-              case TelephonyManager.NETWORK_TYPE_1xRTT:
-                result += "1xRTT";
-                break;
-              case TelephonyManager.NETWORK_TYPE_CDMA:
-                result += "CDMA";
-                break;
-              case TelephonyManager.NETWORK_TYPE_EDGE:
-                result += "EDGE";
-                break;
-              case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                result += "EVDO_0";
-                break;
-              case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                result += "EVDO_A";
-                break;
-              case TelephonyManager.NETWORK_TYPE_GPRS:
-                result += "GPRS";
-                break;
-              case TelephonyManager.NETWORK_TYPE_HSDPA:
-                result += "HSDPA";
-                break;
-              case TelephonyManager.NETWORK_TYPE_HSPA:
-                result += "HSPA";
-                break;
-              case TelephonyManager.NETWORK_TYPE_HSUPA:
-                result += "HSUPA";
-                break;
-              case TelephonyManager.NETWORK_TYPE_UMTS:
-                result += "UMTS";
-                break;
-              case TelephonyManager.NETWORK_TYPE_IDEN: // API level 8
-                result += "IDEN";
-                break;
-              case TelephonyManager.NETWORK_TYPE_UNKNOWN:
-              default:
-                result += "subtype unknown/EVDO_B/EHRPD/LTE/HSPAP or similar";
-            }
-            break;
-          default:
-            result += "unknown type";
+              int subtype = info.getSubtype();
+              switch (subtype) {
+                case TelephonyManager.NETWORK_TYPE_1xRTT:
+                  result += "1xRTT";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                  result += "CDMA";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                  result += "EDGE";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                  result += "EVDO_0";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                  result += "EVDO_A";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_GPRS:
+                  result += "GPRS";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                  result += "HSDPA";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                  result += "HSPA";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_HSUPA:
+                  result += "HSUPA";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                  result += "UMTS";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_IDEN: // API level 8
+                  result += "IDEN";
+                  break;
+                case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                default:
+                  result += "subtype unknown/EVDO_B/EHRPD/LTE/HSPAP or similar";
+              }
+              break;
+            default:
+              result += "unknown type";
+          }
         }
       }
+    }
+    catch (Exception e) {
+      RaygunLogger.e("Failed to collect network information - " + e);
     }
 
     return result;
@@ -135,7 +142,7 @@ public class NetworkInfo {
         }
       }
     }
-    catch (Exception ex) {
+    catch (Exception e) {
     }
   }
 }
