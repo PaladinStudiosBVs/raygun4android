@@ -10,6 +10,12 @@ public class RaygunErrorMessage {
     message = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
     className = throwable.getClass().getCanonicalName();
 
+    if (throwable instanceof Error && message.contains("signal"))
+    {
+       String[] parts = message.split("\n");
+       message = parts[0];
+    }
+
     if (throwable.getCause() != null) {
       innerError = new RaygunErrorMessage(throwable.getCause());
     }

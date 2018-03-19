@@ -2,6 +2,8 @@ package main.java.com.mindscapehq.android.raygun4android;
 
 import android.content.Context;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,15 @@ public class RaygunMessageBuilder implements IRaygunMessageBuilder {
   @Override
   public IRaygunMessageBuilder setExceptionDetails(Throwable throwable) {
     raygunMessage.getDetails().setError(new RaygunErrorMessage(throwable));
+
+    Map customData = raygunMessage.getDetails().getUserCustomData();
+    if (customData == null)
+    {
+      customData = new HashMap();
+    }
+    customData.put("full_message", throwable.getMessage());
+    raygunMessage.getDetails().setUserCustomData(customData);
+
     return this;
   }
 
